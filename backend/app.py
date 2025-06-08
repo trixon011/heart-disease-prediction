@@ -3,9 +3,15 @@ from flask_cors import CORS
 from model import predict
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import os
 
 app = Flask(__name__)
-CORS(app)
+
+# 🔧 Set this to your actual frontend URL
+FRONTEND_ORIGIN = 'https://heart-disease-prediction-2-1a8c.onrender.com'
+
+# ✅ CORS: Allow only the frontend origin + support credentials & preflight
+CORS(app, resources={r"/api/*": {"origins": FRONTEND_ORIGIN}}, supports_credentials=True)
 
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -14,7 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-# User model
+# 📦 User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
@@ -24,13 +30,16 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
-# Create DB tables
+# 🔧 Create DB tables
 with app.app_context():
     db.create_all()
 
-# Signup route
-@app.route('/api/signup', methods=['POST'])
+# 🧾 Signup route
+@app.route('/api/signup', methods=['POST', 'OPTIONS'])
 def signup():
+    if request.method == 'OPTIONS':
+        return jsonify({'message': 'Preflight passed'}), 200
+
     try:
         data = request.get_json()
         name = data.get('name')
@@ -54,13 +63,18 @@ def signup():
         print("Signup error:", e)
         return jsonify({'error': 'Internal server error'}), 500
 
-# Login route
-@app.route('/api/login', methods=['POST'])
+# 🔐 Login route
+@app.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return jsonify({'message': 'Preflight passed'}), 200
+
     try:
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
+
+        print("Login attempt:", email)
 
         if not all([email, password]):
             return jsonify({'error': 'Email and password are required.'}), 400
@@ -76,13 +90,15 @@ def login():
         print("Login error:", e)
         return jsonify({'error': 'Internal server error'}), 500
 
-# Prediction route
-# Prediction route
-@app.route('/api/predict', methods=['POST'])
+# 🧠 Prediction route
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])
 def predict_route():
+    if request.method == 'OPTIONS':
+        return jsonify({'message': 'Preflight passed'}), 200
+
     try:
         data = request.get_json()
-        print("Received JSON:", data)  # DEBUG print for incoming data
+        print("Received JSON:", data)
 
         if not data or "input" not in data:
             return jsonify({'error': "Missing 'input' in JSON"}), 400
@@ -92,9 +108,8 @@ def predict_route():
         if not isinstance(input_data, list) or len(input_data) != 13:
             return jsonify({'error': "Input must be a list of 13 numbers"}), 400
 
-        result = predict(input_data)  # Call your updated predict function
+        result = predict(input_data)
 
-        # DEBUG: print result returned by prediction
         print("Prediction result:", result)
 
         return jsonify(result)
@@ -103,8 +118,7 @@ def predict_route():
         print("Prediction error:", e)
         return jsonify({'error': str(e)}), 500
 
-
-
+# 🚀 Run app
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
