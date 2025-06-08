@@ -12,14 +12,17 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <div className="test">
-        <h1>Testing Login Render</h1>
-        <Login />
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/predict" element={<Predict />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
       <Footer />
     </Router>
   );
 }
+
 
 
 export default App;
