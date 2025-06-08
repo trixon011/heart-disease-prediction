@@ -1,0 +1,11 @@
+pandas
+seaborn
+matplotlib
+numpy
+scikit-learn
+plotly
+xgboost
+flask
+flask-cors
+flask_sqlalchemy
+flask-bcrypt
