@@ -118,6 +118,10 @@ def predict_route():
         print("Prediction error:", e)
         return jsonify({'error': str(e)}), 500
 
+@app.route('/')
+def home():
+    return 'Backend is running!'
+
 # 🚀 Run app
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
