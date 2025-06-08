@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Auth.css';
+import API_URL from '../config';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -14,12 +15,11 @@ const Signup = () => {
     setSuccess('');
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/signup', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name, email, password })
-});
-
+      const res = await fetch(`${API_URL}/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
 
       const data = await res.json();
 

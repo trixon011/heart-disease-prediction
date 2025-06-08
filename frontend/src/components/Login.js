@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
+import API_URL from '../config';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,19 +13,17 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password }),
-});
-
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-
         localStorage.setItem('loggedIn', 'true');
-  navigate('/predict');
+        navigate('/predict');
       } else {
         setError(data.error || data.message || 'Login failed');
       }
