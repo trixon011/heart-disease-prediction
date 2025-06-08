@@ -40,3 +40,7 @@ instance/
 # OS files
 .DS_Store
 Thumbs.db
+
+my_libs/xgboost/lib/xgboost.dll
+backend/Postman-win64-Setup.exe
+my_libs/
