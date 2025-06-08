@@ -7,10 +7,10 @@ import os
 
 app = Flask(__name__)
 
-# 🔧 Set this to your actual frontend URL
-FRONTEND_ORIGIN = 'https://heart-disease-prediction-2-1a8c.onrender.com'
+# Set this to your actual frontend URL
+FRONTEND_ORIGIN = 'https://frontend-deployed-5jr1.onrender.com'
 
-# ✅ CORS: Allow only the frontend origin + support credentials & preflight
+# CORS: Allow only the frontend origin + support credentials & preflight
 CORS(app, resources={r"/api/*": {"origins": FRONTEND_ORIGIN}}, supports_credentials=True)
 
 # Configure SQLite database
@@ -30,7 +30,7 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
-# 🔧 Create DB tables
+# 🛠️ Create DB tables
 with app.app_context():
     db.create_all()
 
